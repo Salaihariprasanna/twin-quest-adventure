@@ -1,6 +1,8 @@
 # ⚔️ Twin Quest: Lost Kingdom
 
-A lightweight, beautiful, browser-based **2D Platform Adventure Game** supporting both **Single Player** and **2-Player Online Cooperative Multiplayer**.
+A stunning, lightweight, browser-based **3D Platform Adventure Game** built with **Three.js**, **WebGL**, **HTML5**, and **Socket.IO** supporting both **Single Player** and **2-Player Online Cooperative Multiplayer**.
+
+> **Real 3D Models • 3D Terrain & Maps • 3D Lighting & Shadows • 100% Zero SVG**
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Salaihariprasanna/twin-quest-adventure)
 
@@ -12,7 +14,15 @@ A lightweight, beautiful, browser-based **2D Platform Adventure Game** supportin
 
 ---
 
-## 🌟 Key Features
+## 🌟 3D Engine & Features
+
+- **🧊 Real 3D WebGL Graphics (Three.js)**:
+  - **Full 3D Character Rigs**: Segmented 3D bodies, moving limbs, billowing 3D capes, and metallic 3D weapons (Steel Greatsword, Recurve Bow, Wizard Staff with glowing crystal orb, and Twin Daggers).
+  - **Full 3D World Maps**: 3D extruded terrain blocks with grass/crystal rims, 3D trees with foliage cones, glowing 3D crystal clusters, ancient ruin pillars, and castle battlements.
+  - **3D Atmospheric Lighting & Fog**: Directional sunlight with real-time drop shadows, warm hemisphere ambient light, crystal point lights, and dynamic fog tuned to each level.
+  - **3D Interactive Objects**: Physically rotating 3D crystal checkpoints, sinking 3D pressure plates, flipping 3D mechanical levers, hinged 3D opening treasure chests, and spinning 3D gold coins.
+  - **3D Monsters & Multi-Phase Bosses**: 3D bouncing translucent slimes, flapping 3D winged bats, armored 3D dark knights, and giant 3D bosses with glowing cores and shockwaves.
+- **🚫 100% Zero SVG**: Every visual element in the game is powered by WebGL 3D meshes and pure CSS 3D matrix transforms!
 
 - **🎮 Dual Game Modes**:
   - **Single Player**: Solo adventure with automatically adapted cooperative mechanics.
