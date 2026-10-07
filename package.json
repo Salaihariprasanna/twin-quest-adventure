@@ -1,0 +1,33 @@
+{
+  "name": "twin-quest-lost-kingdom",
+  "version": "1.0.0",
+  "description": "2D Online Multiplayer Platform Adventure Game",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "node server/server.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "dev": "node dev.js",
+    "install:all": "npm install && npm --prefix client install && npm --prefix server install"
+  },
+  "keywords": [
+    "multiplayer",
+    "platformer",
+    "2d-game",
+    "co-op",
+    "socketio",
+    "canvas"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
+  }
+}
