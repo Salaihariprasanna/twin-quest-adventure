@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Twin Quest: Lost Kingdom — 2D Co-op Platform Adventure</title>
+  <meta name="description" content="A lightweight browser-based 2D co-op platform adventure game. Play solo or with a friend with a private room code!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-CG2kl4qO.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-ChLfs-Co.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Overlay Layer -->
+    <div id="ui-overlay">
+
+      <!-- TOP HUD (Active in game) -->
+      <header id="game-hud" class="hidden">
+        <!-- Player 1 Status -->
+        <div class="player-hud p1-hud" id="hud-p1">
+          <div class="hud-avatar p1-avatar">
+            <span class="avatar-icon">🛡️</span>
+            <span class="player-badge">P1</span>
+          </div>
+          <div class="hud-details">
+            <div class="hud-name-row">
+              <span class="player-name" id="p1-name-display">Player 1</span>
+              <span class="player-class-badge" id="p1-class-display">Warrior</span>
+            </div>
+            <div class="bar-container hp-container">
+              <div class="bar-fill hp-bar" id="p1-hp-bar" style="width: 100%;"></div>
+              <span class="bar-label" id="p1-hp-text">100 / 100</span>
+            </div>
+            <div class="bar-container mp-container">
+              <div class="bar-fill mp-bar" id="p1-mp-bar" style="width: 100%;"></div>
+              <span class="bar-label" id="p1-mp-text">100 / 100</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Level & Boss HUD -->
+        <div class="hud-center">
+          <div class="level-indicator">
+            <span id="level-title-display">Level 1: Whispering Forest</span>
+            <div class="level-stars" id="level-stars">⭐⭐⭐</div>
+          </div>
+
+          <!-- Boss Health Bar (Appears during boss fights) -->
+          <div id="boss-bar-container" class="hidden">
+            <div class="boss-info">
+              <span id="boss-name" class="boss-name">Forest Guardian</span>
+              <span id="boss-phase" class="boss-phase-badge">Phase 1</span>
+            </div>
+            <div class="bar-container boss-hp-container">
+              <div class="bar-fill boss-hp-bar" id="boss-hp-bar" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player 2 Status (in 2-Player mode) -->
+        <div class="player-hud p2-hud hidden" id="hud-p2">
+          <div class="hud-avatar p2-avatar">
+            <span class="avatar-icon">🏹</span>
+            <span class="player-badge">P2</span>
+          </div>
+          <div class="hud-details">
+            <div class="hud-name-row">
+              <span class="player-name" id="p2-name-display">Player 2</span>
+              <span class="player-class-badge" id="p2-class-display">Archer</span>
+            </div>
+            <div class="bar-container hp-container">
+              <div class="bar-fill hp-bar" id="p2-hp-bar" style="width: 100%;"></div>
+              <span class="bar-label" id="p2-hp-text">100 / 100</span>
+            </div>
+            <div class="bar-container mp-container">
+              <div class="bar-fill mp-bar" id="p2-mp-bar" style="width: 100%;"></div>
+              <span class="bar-label" id="p2-mp-text">100 / 100</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Right Stats & Status -->
+        <div class="hud-stats">
+          <div class="coin-display">
+            <span class="coin-icon">🪙</span>
+            <span id="coin-count">0</span>
+          </div>
+          <div class="gem-display">
+            <span class="gem-icon">💎</span>
+            <span id="gem-count">0</span>
+          </div>
+          <div class="network-badge" id="network-badge" title="Network Status">
+            <span class="net-dot online"></span>
+            <span id="net-label">Solo</span>
+          </div>
+          <button id="btn-pause-toggle" class="btn-icon" aria-label="Pause Game">⚙️</button>
+        </div>
+      </header>
+
+      <!-- QUEST TRACKER WIDGET -->
+      <div id="quest-tracker" class="quest-tracker hidden">
+        <div class="quest-header">
+          <span class="quest-icon">📜</span>
+          <span class="quest-heading">Active Quests</span>
+        </div>
+        <ul id="quest-list" class="quest-list">
+          <!-- Dynamic quests injected here -->
+        </ul>
+      </div>
+
+      <!-- FLOATING TOAST / BANNER NOTIFICATIONS -->
+      <div id="toast-container"></div>
+
+      <!-- MAIN MENU SCREEN -->
+      <section id="screen-menu" class="screen-view active">
+        <div class="menu-hero">
+          <div class="title-glow"></div>
+          <h1 class="game-logo">TWIN QUEST</h1>
+          <h2 class="game-subtitle">Lost Kingdom</h2>
+          <p class="game-tagline">An Enchanted 2D Co-op Adventure for One or Two Heroes</p>
+        </div>
+
+        <!-- Hero Class Preview / Selector -->
+        <div class="character-preview-card">
+          <h3 class="preview-title">CHOOSE YOUR HERO</h3>
+          <div class="class-selector" id="menu-class-selector">
+            <button class="class-card active" data-class="warrior">
+              <div class="class-icon">🛡️</div>
+              <div class="class-name">Warrior</div>
+              <div class="class-stat">Melee Slash • Heavy Guard</div>
+            </button>
+            <button class="class-card" data-class="archer">
+              <div class="class-icon">🏹</div>
+              <div class="class-name">Archer</div>
+              <div class="class-stat">Piercing Arrows • Agile Dash</div>
+            </button>
+            <button class="class-card" data-class="mage">
+              <div class="class-icon">🔮</div>
+              <div class="class-name">Mage</div>
+              <div class="class-stat">Arcane Blast • Frost Shield</div>
+            </button>
+            <button class="class-card" data-class="rogue">
+              <div class="class-icon">🗡️</div>
+              <div class="class-name">Rogue</div>
+              <div class="class-stat">Twin Daggers • Shadow Cloak</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Menu Action Buttons -->
+        <div class="menu-actions">
+          <button id="btn-single-player" class="btn-primary pulse-btn">
+            <span class="btn-icon-large">⚔️</span>
+            <div class="btn-content">
+              <strong>Single Player</strong>
+              <small>Begin your solo journey</small>
+            </div>
+          </button>
+
+          <div class="menu-row">
+            <button id="btn-create-game" class="btn-secondary">
+              <span class="btn-icon">🏰</span>
+              <span>Create Room</span>
+            </button>
+            <button id="btn-join-game" class="btn-secondary">
+              <span class="btn-icon">🔑</span>
+              <span>Join Room</span>
+            </button>
+          </div>
+
+          <div class="menu-sub-row">
+            <button id="btn-how-to-play" class="btn-subtle">
+              <span>📖 How to Play</span>
+            </button>
+            <button id="btn-settings" class="btn-subtle">
+              <span>⚙️ Settings</span>
+            </button>
+          </div>
+        </div>
+
+        <footer class="menu-footer">
+          <span>✨ Fast Instant Play • No Downloads • Single & Two-Player Co-op</span>
+        </footer>
+      </section>
+
+      <!-- LOBBY SCREEN (Waiting for partner / Ready room) -->
+      <section id="screen-lobby" class="screen-view hidden">
+        <div class="lobby-card">
+          <div class="lobby-header">
+            <h2>🏰 Adventure Chamber</h2>
+            <p>Share this 6-character private code with your partner</p>
+          </div>
+
+          <div class="room-code-wrapper">
+            <div class="code-box">
+              <span class="code-label">GAME CODE</span>
+              <span id="lobby-code-display" class="code-text">------</span>
+            </div>
+            <button id="btn-copy-code" class="btn-action">
+              <span>📋 Copy Code</span>
+            </button>
+            <button id="btn-copy-link" class="btn-action">
+              <span>🔗 Copy Link</span>
+            </button>
+          </div>
+
+          <!-- 2 Players Card -->
+          <div class="players-roster">
+            <!-- P1 Slot -->
+            <div class="roster-slot" id="slot-p1">
+              <div class="slot-badge host-badge">👑 Host (P1)</div>
+              <div class="slot-avatar" id="slot-p1-avatar">🛡️</div>
+              <div class="slot-name" id="slot-p1-name">Player 1</div>
+              <div class="slot-class" id="slot-p1-class">Warrior</div>
+              <div class="slot-status ready" id="slot-p1-status">🟢 Ready</div>
+            </div>
+
+            <div class="roster-divider">
+              <span class="vs-glow">⚔️</span>
+              <span class="coop-label">COOPERATIVE</span>
+            </div>
+
+            <!-- P2 Slot -->
+            <div class="roster-slot waiting" id="slot-p2">
+              <div class="slot-badge">Partner (P2)</div>
+              <div class="slot-avatar" id="slot-p2-avatar">❓</div>
+              <div class="slot-name" id="slot-p2-name">Waiting for Player 2...</div>
+              <div class="slot-class" id="slot-p2-class">---</div>
+              <div class="slot-status waiting" id="slot-p2-status">⏳ Awaiting Connection</div>
+            </div>
+          </div>
+
+          <div class="lobby-class-change">
+            <label>Change Class:</label>
+            <div class="mini-class-picker" id="lobby-class-picker">
+              <button class="mini-picker-btn active" data-class="warrior">🛡️ Warrior</button>
+              <button class="mini-picker-btn" data-class="archer">🏹 Archer</button>
+              <button class="mini-picker-btn" data-class="mage">🔮 Mage</button>
+              <button class="mini-picker-btn" data-class="rogue">🗡️ Rogue</button>
+            </div>
+          </div>
+
+          <!-- Lobby Action Buttons -->
+          <div class="lobby-controls">
+            <button id="btn-lobby-ready" class="btn-secondary">
+              <span id="ready-btn-text">Ready Up ⚔️</span>
+            </button>
+            <button id="btn-lobby-start" class="btn-primary" disabled>
+              <span>START ADVENTURE 🚀</span>
+            </button>
+            <button id="btn-lobby-leave" class="btn-subtle">
+              <span>Exit Lobby</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOIN ROOM MODAL -->
+      <div id="modal-join" class="modal-backdrop hidden">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3>🔑 Join Adventure</h3>
+            <button class="modal-close" id="btn-close-join">✕</button>
+          </div>
+          <p class="modal-desc">Enter the 6-character room code given to you by the Host:</p>
+          <div class="input-group">
+            <input type="text" id="join-code-input" placeholder="e.g. X7K9P2" maxlength="6" autocomplete="off" autocapitalize="characters">
+          </div>
+          <div class="join-name-group">
+            <label for="join-name-input">Your Hero Name:</label>
+            <input type="text" id="join-name-input" placeholder="Hero" maxlength="12" value="Hero 2">
+          </div>
+          <div class="modal-actions">
+            <button id="btn-confirm-join" class="btn-primary">
+              <span>Join Game ⚔️</span>
+            </button>
+            <button id="btn-cancel-join" class="btn-subtle">
+              <span>Cancel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOW TO PLAY MODAL -->
+      <div id="modal-how-to-play" class="modal-backdrop hidden">
+        <div class="modal-card wide">
+          <div class="modal-header">
+            <h3>📖 Controls & Co-op Guide</h3>
+            <button class="modal-close" id="btn-close-how">✕</button>
+          </div>
+          <div class="modal-scrollable">
+            <div class="guide-grid">
+              <div class="guide-box">
+                <h4>🖥️ Desktop Controls</h4>
+                <ul>
+                  <li><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> / <kbd>→</kbd> : Move Left / Right</li>
+                  <li><kbd>Space</kbd> / <kbd>W</kbd> : Jump (Press again to Double Jump!)</li>
+                  <li><kbd>Shift</kbd> : Dash / Evade</li>
+                  <li><kbd>J</kbd> or Left Click : Primary Attack</li>
+                  <li><kbd>K</kbd> or Right Click : Special Class Skill</li>
+                  <li><kbd>E</kbd> : Interact (Lever, Chest, Talk, Door)</li>
+                  <li><kbd>ESC</kbd> : Pause / Menu</li>
+                </ul>
+              </div>
+              <div class="guide-box">
+                <h4>📱 Mobile Controls</h4>
+                <p>On smartphones & tablets, on-screen responsive touch controls will appear automatically with a virtual D-pad and large action buttons.</p>
+              </div>
+            </div>
+            <div class="coop-tips-box">
+              <h4>🤝 Cooperative Tasks:</h4>
+              <p>• <strong>Pressure Plates & Gates:</strong> One player holds down a pressure plate while the other crosses.</p>
+              <p>• <strong>Dual Levers:</strong> Pull ancient levers together to open grand barrier doors!</p>
+              <p>• <strong>Boss Battles:</strong> Coordinate aggro, dodge telegraphed attacks, and revive at glowing Crystal Checkpoints.</p>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-dismiss-how" class="btn-primary">Got it, Let's Play!</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS / PAUSE MODAL -->
+      <div id="modal-settings" class="modal-backdrop hidden">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3 id="settings-title">⚙️ Game Settings</h3>
+            <button class="modal-close" id="btn-close-settings">✕</button>
+          </div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <label for="slider-master-volume">Master Volume</label>
+              <input type="range" id="slider-master-volume" min="0" max="100" value="80">
+            </div>
+            <div class="setting-row">
+              <label for="slider-sfx-volume">SFX Volume</label>
+              <input type="range" id="slider-sfx-volume" min="0" max="100" value="85">
+            </div>
+            <div class="setting-row">
+              <label for="slider-music-volume">Music Volume</label>
+              <input type="range" id="slider-music-volume" min="0" max="100" value="65">
+            </div>
+            <div class="setting-row">
+              <label>Audio Mute</label>
+              <button id="btn-mute-toggle" class="btn-toggle">Sound: ON 🔊</button>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-resume-game" class="btn-primary hidden">Resume Game</button>
+            <button id="btn-quit-to-menu" class="btn-danger hidden">Return to Menu</button>
+            <button id="btn-dismiss-settings" class="btn-subtle">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VICTORY / LEVEL COMPLETE MODAL -->
+      <div id="modal-victory" class="modal-backdrop hidden">
+        <div class="modal-card celebration">
+          <div class="victory-banner">🏆 VICTORY!</div>
+          <h2 id="victory-title">Level Completed!</h2>
+          <p id="victory-subtitle">The kingdom grows closer to salvation.</p>
+          <div class="victory-stats">
+            <div class="v-stat"><span class="v-label">Coins Collected:</span> <strong id="v-coins">0</strong></div>
+            <div class="v-stat"><span class="v-label">Enemies Slain:</span> <strong id="v-kills">0</strong></div>
+            <div class="v-stat"><span class="v-label">Boss Defeated:</span> <strong id="v-boss">Yes</strong></div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-next-level" class="btn-primary pulse-btn">Next Level ➔</button>
+            <button id="btn-victory-menu" class="btn-subtle">Return to Menu</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME OVER MODAL -->
+      <div id="modal-gameover" class="modal-backdrop hidden">
+        <div class="modal-card gameover">
+          <div class="gameover-skull">💀</div>
+          <h2>YOU DIED</h2>
+          <p>Don't give up, hero! Checkpoints preserve your progress.</p>
+          <div class="modal-actions">
+            <button id="btn-respawn" class="btn-primary pulse-btn">✨ Respawn at Checkpoint</button>
+            <button id="btn-gameover-menu" class="btn-subtle">Return to Menu</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECONNECTION OVERLAY BANNER -->
+      <div id="reconnect-banner" class="reconnect-banner hidden">
+        <div class="spinner"></div>
+        <div class="reconnect-text">
+          <strong id="reconnect-title">Partner Connection Lost</strong>
+          <span id="reconnect-subtitle">Waiting for partner to reconnect...</span>
+        </div>
+      </div>
+
+      <!-- TOUCH CONTROLS (Mobile Devices) -->
+      <div id="touch-controls" class="touch-controls-container hidden">
+        <!-- Left: Movement D-Pad -->
+        <div class="touch-dpad">
+          <button id="btn-touch-left" class="touch-btn dpad-btn" aria-label="Left">◀</button>
+          <button id="btn-touch-right" class="touch-btn dpad-btn" aria-label="Right">▶</button>
+        </div>
+        <!-- Right: Action Buttons -->
+        <div class="touch-actions">
+          <button id="btn-touch-interact" class="touch-btn action-small" aria-label="Interact">E</button>
+          <button id="btn-touch-dash" class="touch-btn action-small" aria-label="Dash">⚡</button>
+          <button id="btn-touch-skill" class="touch-btn action-med" aria-label="Skill">✨</button>
+          <button id="btn-touch-attack" class="touch-btn action-med" aria-label="Attack">⚔️</button>
+          <button id="btn-touch-jump" class="touch-btn action-large" aria-label="Jump">▲</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

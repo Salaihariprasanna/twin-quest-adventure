@@ -4,10 +4,8 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm --prefix client install && npm --prefix client run build
+    buildCommand: npm run build
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: 20.18.0
-      - key: NODE_ENV
-        value: production

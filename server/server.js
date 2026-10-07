@@ -38,23 +38,20 @@ app.get('/api/health', (req, res) => {
 
 // Serve frontend build if dist exists
 const distPath = path.resolve(__dirname, '../client/dist');
-if (fs.existsSync(distPath)) {
-  console.log(`[Server] Serving production static files from ${distPath}`);
-  app.use(express.static(distPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-} else {
-  app.get('/', (req, res) => {
+app.use(express.static(distPath));
+app.get('*', (req, res) => {
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
     res.send(`
       <div style="font-family:sans-serif; text-align:center; padding: 50px;">
         <h1>⚔️ Twin Quest: Lost Kingdom Server is Running!</h1>
-        <p>Frontend is currently running in development mode on port 5173, or run <code>npm run build</code> to produce production files.</p>
-        <p><a href="http://localhost:5173" style="color: #6366f1; font-weight: bold;">Open Game Client (http://localhost:5173)</a></p>
+        <p>Building client bundle... Please refresh in a few moments.</p>
       </div>
     `);
-  });
-}
+  }
+});
 
 // Socket.io Real-time Multiplayer Handling
 io.on('connection', (socket) => {
@@ -339,10 +336,10 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`===============================================`);
   console.log(`🏰 Twin Quest: Lost Kingdom Server`);
-  console.log(`🚀 Server listening on http://localhost:${PORT}`);
+  console.log(`🚀 Server listening on 0.0.0.0:${PORT}`);
   console.log(`✨ Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`===============================================`);
 });
