@@ -1,0 +1,11 @@
+{
+  "name": "Twin Quest: Lost Kingdom",
+  "short_name": "Twin Quest",
+  "description": "2D Online Multiplayer Platform Adventure Game",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#06090e",
+  "theme_color": "#06090e"
+}

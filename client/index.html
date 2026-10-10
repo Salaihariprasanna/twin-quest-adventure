@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#06090e">
   <title>Twin Quest: Lost Kingdom — 2D Co-op Platform Adventure</title>
   <meta name="description" content="A lightweight browser-based 2D co-op platform adventure game. Play solo or with a friend with a private room code!">
+  <link rel="manifest" href="./manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -97,6 +102,7 @@
             <span class="net-dot online"></span>
             <span id="net-label">Solo</span>
           </div>
+          <button id="btn-fullscreen-hud" class="btn-icon" aria-label="Toggle Fullscreen" title="Toggle Fullscreen">⛶</button>
           <button id="btn-pause-toggle" class="btn-icon" aria-label="Pause Game">⚙️</button>
         </div>
       </header>
@@ -178,6 +184,9 @@
             </button>
             <button id="btn-settings" class="btn-subtle">
               <span>⚙️ Settings</span>
+            </button>
+            <button id="btn-fullscreen-menu" class="btn-subtle">
+              <span>⛶ Fullscreen App</span>
             </button>
           </div>
         </div>
@@ -395,6 +404,12 @@
           <strong id="reconnect-title">Partner Connection Lost</strong>
           <span id="reconnect-subtitle">Waiting for partner to reconnect...</span>
         </div>
+      </div>
+
+      <!-- ORIENTATION LANDSCAPE ADVISORY BANNER -->
+      <div id="orientation-hint" class="orientation-hint hidden">
+        <span>📱 Rotate device to Landscape for best play! ⤹</span>
+        <button id="btn-dismiss-orientation" class="orientation-dismiss">✕</button>
       </div>
 
       <!-- TOUCH CONTROLS (Mobile Devices) -->

@@ -60,13 +60,20 @@ export class GameEngine {
 
   setupResize() {
     const resize = () => {
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
-      this.camera.resize(window.innerWidth, window.innerHeight);
+      const w = window.visualViewport ? Math.round(window.visualViewport.width) : window.innerWidth;
+      const h = window.visualViewport ? Math.round(window.visualViewport.height) : window.innerHeight;
+      this.canvas.width = w;
+      this.canvas.height = h;
+      this.camera.resize(w, h);
     };
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', resize);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', resize);
+    }
     resize();
   }
+
 
   loadSaveData() {
     try {

@@ -33,6 +33,57 @@ window.addEventListener('DOMContentLoaded', () => {
   const modalGameover = document.getElementById('modal-gameover');
   const touchControls = document.getElementById('touch-controls');
 
+  // Dynamic Android Viewport Height Handler (avoids URL bar clipping & jumpiness)
+  const updateViewportHeight = () => {
+    const h = window.visualViewport ? Math.round(window.visualViewport.height) : window.innerHeight;
+    document.documentElement.style.setProperty('--app-height', `${h}px`);
+  };
+  window.addEventListener('resize', updateViewportHeight);
+  window.addEventListener('orientationchange', updateViewportHeight);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateViewportHeight);
+    window.visualViewport.addEventListener('scroll', updateViewportHeight);
+  }
+  updateViewportHeight();
+
+  // Fullscreen Helper to play like an Android App without URL bar
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  };
+  document.getElementById('btn-fullscreen-hud')?.addEventListener('click', toggleFullscreen);
+  document.getElementById('btn-fullscreen-menu')?.addEventListener('click', toggleFullscreen);
+
+  // Landscape Advisory Hint for Mobile Devices
+  const checkOrientation = () => {
+    const hint = document.getElementById('orientation-hint');
+    if (!hint) return;
+    const isPortrait = window.innerHeight > window.innerWidth;
+    if (isPortrait && (inputManager.isTouchDevice || window.innerWidth <= 850)) {
+      hint.classList.remove('hidden');
+    } else {
+      hint.classList.add('hidden');
+    }
+  };
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', checkOrientation);
+  document.getElementById('btn-dismiss-orientation')?.addEventListener('click', () => {
+    document.getElementById('orientation-hint')?.classList.add('hidden');
+  });
+  checkOrientation();
+
   // Show touch controls if on mobile/touch device
   if (inputManager.isTouchDevice || window.innerWidth <= 850) {
     if (touchControls) touchControls.classList.remove('hidden');
@@ -63,10 +114,16 @@ window.addEventListener('DOMContentLoaded', () => {
   // 5. Single Player Start
   document.getElementById('btn-single-player')?.addEventListener('click', () => {
     audioManager.ensureContext();
+    if (inputManager.isTouchDevice || window.innerWidth <= 850) {
+      // Enter borderless fullscreen on Android for native app experience
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+    }
     screenMenu.classList.remove('active');
     screenMenu.classList.add('hidden');
     gameEngine.startSoloGame(selectedClass, myPlayerName);
   });
+
 
   // 6. Create Multiplayer Room
   document.getElementById('btn-create-game')?.addEventListener('click', () => {

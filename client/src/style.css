@@ -65,22 +65,38 @@
 }
 
 html, body {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  height: var(--app-height, 100%);
   overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: none;
   background-color: #06090e;
   font-family: 'Nunito', sans-serif;
   color: #f8fafc;
 }
 
 #app-container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  height: var(--app-height, 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   background: radial-gradient(circle at 50% 40%, #151c2e 0%, #06090e 100%);
   perspective: 1400px;
 }
@@ -91,6 +107,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
+  touch-action: none;
   image-rendering: auto;
   z-index: 1;
 }
@@ -101,13 +118,22 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  height: var(--app-height, 100%);
+  overflow: hidden;
   z-index: 10;
   pointer-events: none;
   display: flex;
   flex-direction: column;
   perspective: 1400px;
   transform-style: preserve-3d;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
+
 
 .hidden {
   display: none !important;
@@ -1604,40 +1630,45 @@ kbd {
 }
 
 /* ========================================================
-   10. MOBILE RESPONSIVE TOUCH CONTROLS
+   10. MOBILE RESPONSIVE TOUCH CONTROLS (ANDROID OPTIMIZED)
    ======================================================== */
 .touch-controls-container {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 220px;
+  height: auto;
   pointer-events: none;
   z-index: 40;
   display: flex;
   justify-content: space-between;
-  padding: 20px 24px;
+  align-items: flex-end;
+  box-sizing: border-box;
+  padding: 0 max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  touch-action: none;
 }
 
 .touch-dpad {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: flex-end;
   pointer-events: auto;
+  touch-action: none;
 }
 
 .touch-actions {
   display: grid;
   grid-template-columns: repeat(3, auto);
-  gap: 12px;
+  gap: 10px;
   align-items: flex-end;
   pointer-events: auto;
+  touch-action: none;
 }
 
 /* Tactile Sculpted Stone Action Buttons (Zero SVG!) */
 .touch-btn {
   background: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 40%),
     linear-gradient(135deg, var(--wood-mid) 0%, var(--wood-dark) 100%);
   border: 2px solid var(--brass-mid);
   color: #fff;
@@ -1647,58 +1678,94 @@ kbd {
   justify-content: center;
   font-weight: 900;
   box-shadow: 
-    0 5px 0 #0f172a,
-    0 10px 18px rgba(0, 0, 0, 0.7),
+    0 4px 0 #0f172a,
+    0 8px 16px rgba(0, 0, 0, 0.7),
     inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  touch-action: manipulation;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
   cursor: pointer;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  opacity: 0.9;
+  transition: transform 0.06s ease, box-shadow 0.06s ease, opacity 0.06s ease;
 }
 
 .touch-btn:active {
-  transform: translateY(4px);
+  transform: translateY(3px) scale(0.96);
   box-shadow: 0 1px 0 #0f172a, 0 3px 6px rgba(0, 0, 0, 0.8);
+  opacity: 1;
+  border-color: var(--brass-shine);
 }
 
 .dpad-btn {
-  width: 64px;
-  height: 64px;
-  font-size: 1.5rem;
+  width: 56px;
+  height: 56px;
+  font-size: 1.35rem;
 }
 
 .action-small {
-  width: 50px;
-  height: 50px;
-  font-size: 1rem;
+  width: 44px;
+  height: 44px;
+  font-size: 0.95rem;
 }
 
 .action-med {
-  width: 62px;
-  height: 62px;
-  font-size: 1.4rem;
+  width: 52px;
+  height: 52px;
+  font-size: 1.25rem;
 }
 
 .action-large {
-  width: 74px;
-  height: 74px;
-  font-size: 1.8rem;
+  width: 62px;
+  height: 62px;
+  font-size: 1.6rem;
   background: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 40%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, transparent 40%),
     linear-gradient(180deg, #f59e0b 0%, #d97706 60%, #b45309 100%);
   border-color: var(--brass-shine);
   color: #271406;
 }
 
+/* Orientation Landscape Advisory Banner */
+.orientation-hint {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(39, 20, 6, 0.96), rgba(15, 23, 42, 0.98));
+  border: 1.5px solid var(--brass-shine);
+  color: #fef08a;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 70;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.orientation-dismiss {
+  background: transparent;
+  border: none;
+  color: #fef08a;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
 /* ========================================================
-   11. FLOATING TOASTS & RESPONSIVE RULES
+   11. FLOATING TOASTS & RESPONSIVE RULES (ANDROID / MOBILE)
    ======================================================== */
 #toast-container {
   position: absolute;
-  top: 90px;
-  right: 28px;
+  top: max(80px, calc(env(safe-area-inset-top) + 60px));
+  right: max(20px, env(safe-area-inset-right));
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   z-index: 60;
   pointer-events: none;
 }
@@ -1709,10 +1776,10 @@ kbd {
     linear-gradient(135deg, var(--wood-mid) 0%, var(--wood-dark) 100%);
   border: 1.5px solid var(--brass-shine);
   color: #fef3c7;
-  padding: 12px 18px;
-  border-radius: 14px;
+  padding: 10px 16px;
+  border-radius: 12px;
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   box-shadow: var(--diorama-shadow);
   animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -1722,13 +1789,191 @@ kbd {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@media (max-width: 768px) {
-  .game-logo { font-size: 2.8rem; }
-  .game-subtitle { font-size: 1.2rem; }
-  .class-selector { grid-template-columns: repeat(2, 1fr); }
-  .menu-actions { max-width: 100%; }
+/* Portrait Mobile Layout */
+@media (max-width: 768px) and (orientation: portrait) {
+  .game-logo { font-size: 3rem; }
+  .game-subtitle { font-size: 1.3rem; }
+  .class-selector { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .character-preview-card { padding: 16px; }
+  .menu-actions { max-width: 100%; gap: 10px; }
   #game-hud { padding: 8px 12px; }
-  .player-hud { min-width: 160px; padding: 6px 10px; }
-  .hud-avatar { width: 38px; height: 38px; font-size: 1.2rem; }
+  .player-hud { min-width: 150px; padding: 6px 10px; }
+  .hud-avatar { width: 40px; height: 40px; font-size: 1.25rem; }
   .quest-tracker { display: none; }
+  .dpad-btn { width: 54px; height: 54px; font-size: 1.3rem; }
+  .action-large { width: 58px; height: 58px; font-size: 1.5rem; }
+  .action-med { width: 48px; height: 48px; font-size: 1.15rem; }
+  .action-small { width: 40px; height: 40px; font-size: 0.9rem; }
 }
+
+/* Landscape Mobile Layout (Dominant Android Game Mode) */
+@media (max-height: 520px) {
+  #game-hud {
+    padding: 6px max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+  }
+  .player-hud {
+    min-width: 180px;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .hud-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  .player-name {
+    font-size: 0.8rem;
+  }
+  .bar-container {
+    height: 9px;
+  }
+  .bar-label {
+    font-size: 0.52rem;
+  }
+  .level-indicator {
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    border-radius: 14px;
+  }
+  .level-indicator::before, .level-indicator::after {
+    height: 8px;
+    top: -8px;
+  }
+  .hud-stats {
+    padding: 4px 10px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+  .coin-display, .gem-display {
+    font-size: 0.85rem;
+  }
+  .btn-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+  .quest-tracker {
+    display: none;
+  }
+  #boss-bar-container {
+    width: 260px;
+    padding: 6px 10px;
+  }
+  .boss-name {
+    font-size: 0.8rem;
+  }
+  .boss-hp-container {
+    height: 10px;
+  }
+
+  /* Main Menu in Mobile Landscape */
+  .screen-view {
+    padding: 12px;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+  .menu-hero {
+    margin-bottom: 8px;
+  }
+  .game-logo {
+    font-size: 2.4rem;
+    letter-spacing: 3px;
+  }
+  .game-subtitle {
+    font-size: 1rem;
+    letter-spacing: 4px;
+  }
+  .game-tagline {
+    display: none;
+  }
+  .character-preview-card {
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    max-width: 580px;
+  }
+  .preview-title {
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+  }
+  .class-selector {
+    gap: 10px;
+  }
+  .class-card {
+    padding: 8px 6px;
+    border-radius: 12px;
+  }
+  .class-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+  }
+  .class-name {
+    font-size: 0.78rem;
+  }
+  .class-stat {
+    font-size: 0.58rem;
+  }
+  .menu-actions {
+    max-width: 440px;
+    gap: 8px;
+  }
+  .btn-primary {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+  .btn-secondary, .btn-subtle {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+  .menu-footer {
+    display: none;
+  }
+
+  /* Modals in Mobile Landscape */
+  .modal-card {
+    max-height: 90dvh;
+    overflow-y: auto;
+    padding: 18px;
+    gap: 12px;
+  }
+  .modal-header h3 {
+    font-size: 1.25rem;
+  }
+  .lobby-card {
+    max-height: 90dvh;
+    overflow-y: auto;
+    padding: 18px;
+    gap: 12px;
+  }
+  .room-code-wrapper {
+    padding: 10px 14px;
+  }
+  .code-text {
+    font-size: 1.8rem;
+  }
+
+  /* Touch controls in Landscape */
+  .touch-controls-container {
+    padding: 0 max(16px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  .dpad-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  .action-large {
+    width: 54px;
+    height: 54px;
+    font-size: 1.4rem;
+  }
+  .action-med {
+    width: 46px;
+    height: 46px;
+    font-size: 1.1rem;
+  }
+  .action-small {
+    width: 38px;
+    height: 38px;
+    font-size: 0.82rem;
+  }
+}
+
