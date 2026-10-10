@@ -3,7 +3,7 @@
 import { AudioManager } from './game/AudioManager.js';
 import { InputManager } from './game/InputManager.js';
 import { NetworkManager } from './network/NetworkManager.js';
-import { GameEngine3D } from './game/GameEngine3D.js';
+import { GameEngine } from './game/GameEngine.js';
 import { CHARACTER_CLASSES } from './characters/CharacterClasses.js';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -15,9 +15,9 @@ window.addEventListener('DOMContentLoaded', () => {
   let selectedClass = 'warrior';
   let myPlayerName = 'Hero';
 
-  // Instantiate 3D Game Engine and Network Manager
+  // Instantiate Premium 2D Cinematic Game Engine and Network Manager
   const networkManager = new NetworkManager(null);
-  const gameEngine = new GameEngine3D(canvas, inputManager, audioManager, networkManager);
+  const gameEngine = new GameEngine(canvas, inputManager, audioManager, networkManager);
   networkManager.gameEngine = gameEngine;
 
   // Initialize network connection

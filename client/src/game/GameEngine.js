@@ -860,5 +860,9 @@ export class GameEngine {
 
     // Restore Camera
     this.camera.restore(this.ctx);
+
+    // 7. Foreground Layer (Depth-of-field foliage, fireflies, atmosphere, cinematic vignette)
+    this.tileRenderer.renderForeground(this.ctx, this.camera, this.levelData.theme);
   }
+
 }

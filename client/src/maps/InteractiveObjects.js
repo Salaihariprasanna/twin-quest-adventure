@@ -1,4 +1,5 @@
 // Interactive elements: Checkpoints, Levers, Pressure Plates, Doors, Chests, Moving & Crumbling Platforms
+import { ArtAssets2D } from '../graphics/ArtAssets2D.js';
 
 export class Checkpoint {
   constructor(id, x, y) {
@@ -30,38 +31,10 @@ export class Checkpoint {
   }
 
   render(ctx) {
-    const cx = this.x + this.width / 2;
-    const cy = this.y + this.height / 2;
-    const floatOffset = Math.sin(this.animTime * 4) * 4;
-
-    ctx.save();
-    // Stone Pedestal
-    ctx.fillStyle = '#475569';
-    ctx.fillRect(this.x + 4, this.y + 36, 28, 18);
-    ctx.fillStyle = '#64748b';
-    ctx.fillRect(this.x, this.y + 48, 36, 6);
-
-    // Glowing Crystal
-    const glow = this.active ? '#38bdf8' : '#94a3b8';
-    ctx.fillStyle = glow;
-
-    if (this.active) {
-      // Glow aura
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 16 + Math.sin(this.animTime * 6) * 6;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(cx, this.y + 8 + floatOffset);
-    ctx.lineTo(cx + 12, this.y + 24 + floatOffset);
-    ctx.lineTo(cx, this.y + 34 + floatOffset);
-    ctx.lineTo(cx - 12, this.y + 24 + floatOffset);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.restore();
+    ArtAssets2D.get().drawCheckpoint(ctx, this.x + this.width / 2, this.y + this.height - 20, this.active, this.animTime);
   }
 }
+
 
 export class Switch {
   constructor(id, x, y, targetId, isPressurePlate = false) {
@@ -198,30 +171,10 @@ export class Chest {
   }
 
   render(ctx) {
-    ctx.save();
-    // Chest base
-    ctx.fillStyle = '#78350f';
-    ctx.fillRect(this.x, this.y + 10, this.width, 18);
-
-    // Metal Trim
-    ctx.fillStyle = this.tier === 'legendary' ? '#f59e0b' : (this.tier === 'epic' ? '#a855f7' : '#94a3b8');
-    ctx.fillRect(this.x, this.y + 10, 4, 18);
-    ctx.fillRect(this.x + this.width - 4, this.y + 10, 4, 18);
-    ctx.fillRect(this.x + this.width / 2 - 3, this.y + 12, 6, 8); // Lock
-
-    // Lid
-    if (this.opened) {
-      ctx.fillStyle = '#92400e';
-      ctx.fillRect(this.x - 2, this.y + 2, this.width + 4, 8);
-    } else {
-      ctx.fillStyle = '#92400e';
-      ctx.beginPath();
-      ctx.roundRect(this.x - 2, this.y, this.width + 4, 12, [6, 6, 0, 0]);
-      ctx.fill();
-    }
-    ctx.restore();
+    ArtAssets2D.get().drawChest(ctx, this.x + this.width / 2, this.y + 4, this.opened, this.tier);
   }
 }
+
 
 export class MovingPlatform {
   constructor(id, x, y, width, height, dx = 160, dy = 0, speed = 60) {
@@ -274,32 +227,7 @@ export class ExitPortal {
   }
 
   render(ctx) {
-    ctx.save();
-    const cx = this.x + this.width / 2;
-    const cy = this.y + this.height / 2;
-
-    // Stone Archway
-    ctx.fillStyle = '#475569';
-    ctx.fillRect(this.x, this.y, 10, this.height);
-    ctx.fillRect(this.x + this.width - 10, this.y, 10, this.height);
-    ctx.fillRect(this.x, this.y, this.width, 12);
-
-    // Swirling Portal Energy
-    if (this.active) {
-      const gradient = ctx.createRadialGradient(cx, cy, 5, cx, cy, 26);
-      gradient.addColorStop(0, '#ffffff');
-      gradient.addColorStop(0.5, '#6366f1');
-      gradient.addColorStop(1, '#a855f7');
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 4, 16, 26, 0, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 4, 14, 24, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.restore();
+    ArtAssets2D.get().drawPortal(ctx, this.x + this.width / 2, this.y + this.height / 2, this.animTime);
   }
 }
+

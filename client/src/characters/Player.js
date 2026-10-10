@@ -1,4 +1,5 @@
 import { CHARACTER_CLASSES } from './CharacterClasses.js';
+import { HeroRenderer2D } from './HeroRenderer2D.js';
 
 export class Player {
   constructor(id, name, characterClass = 'warrior', isLocal = true) {
@@ -360,75 +361,9 @@ export class Player {
     return null;
   }
 
-  // --- Procedural 2D Cartoon Character Rendering ---
+  // --- Premium Illustrated 2D Hero Rendering ---
   render(ctx) {
-    if (this.hurtTimer > 0 && Math.floor(this.animTime * 20) % 2 === 0) {
-      // Invulnerability flicker
-      return;
-    }
-
-    ctx.save();
-    ctx.translate(Math.round(this.x + this.width / 2), Math.round(this.y + this.height / 2));
-    ctx.scale(this.facing, 1);
-
-    const bob = Math.sin(this.animTime * 10) * (this.state === 'run' ? 3 : 1);
-    const legSwing = Math.sin(this.animTime * 14) * (this.state === 'run' ? 10 : 0);
-
-    // Cape / Back accessory
-    ctx.fillStyle = this.stats.capeColor;
-    ctx.beginPath();
-    ctx.moveTo(-10, -10 + bob);
-    ctx.lineTo(-16 - (this.state === 'run' ? 8 : 2), 16 + bob);
-    ctx.lineTo(-4, 16 + bob);
-    ctx.closePath();
-    ctx.fill();
-
-    // Legs
-    ctx.fillStyle = this.stats.secondaryColor;
-    // Left leg
-    ctx.fillRect(-8 + legSwing * 0.4, 10 + bob, 6, 13);
-    // Right leg
-    ctx.fillRect(2 - legSwing * 0.4, 10 + bob, 6, 13);
-
-    // Boots
-    ctx.fillStyle = '#1e293b';
-    ctx.fillRect(-9 + legSwing * 0.4, 20 + bob, 8, 4);
-    ctx.fillRect(1 - legSwing * 0.4, 20 + bob, 8, 4);
-
-    // Body / Armor
-    ctx.fillStyle = this.stats.color;
-    ctx.beginPath();
-    ctx.roundRect(-10, -8 + bob, 20, 20, 4);
-    ctx.fill();
-
-    // Belt
-    ctx.fillStyle = '#b45309';
-    ctx.fillRect(-10, 8 + bob, 20, 4);
-    ctx.fillStyle = '#fef08a';
-    ctx.fillRect(-3, 8 + bob, 6, 4);
-
-    // Head
-    ctx.fillStyle = '#fed7aa'; // Skin tone
-    ctx.beginPath();
-    ctx.arc(0, -14 + bob, 11, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Hair / Helmet
-    ctx.fillStyle = this.stats.secondaryColor;
-    ctx.beginPath();
-    ctx.arc(0, -17 + bob, 12, Math.PI, Math.PI * 2);
-    ctx.fill();
-
-    // Eye
-    ctx.fillStyle = '#0f172a';
-    ctx.beginPath();
-    ctx.arc(4, -14 + bob, 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Weapon / Action Render
-    this.renderWeapon(ctx, bob);
-
-    ctx.restore();
+    HeroRenderer2D.get().renderHero(ctx, this);
 
     // Render Projectiles
     this.renderProjectiles(ctx);
@@ -437,56 +372,6 @@ export class Player {
     this.renderOverheadInfo(ctx);
   }
 
-  renderWeapon(ctx, bob) {
-    if (this.characterClass === 'warrior') {
-      // Steel Sword
-      ctx.save();
-      ctx.translate(8, 0 + bob);
-      const slashAngle = this.attackAnimTimer > 0 ? (0.22 - this.attackAnimTimer) * 12 : 0;
-      ctx.rotate(slashAngle);
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillRect(0, -18, 5, 20); // Blade
-      ctx.fillStyle = '#e2e8f0';
-      ctx.fillRect(1, -18, 2, 20); // Highlight
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(-4, 0, 13, 3); // Guard
-      ctx.fillStyle = '#78350f';
-      ctx.fillRect(0, 3, 5, 6); // Hilt
-      ctx.restore();
-    } else if (this.characterClass === 'archer') {
-      // Wooden Bow
-      ctx.save();
-      ctx.translate(10, 0 + bob);
-      ctx.strokeStyle = '#92400e';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(0, 0, 14, -Math.PI / 2.2, Math.PI / 2.2);
-      ctx.stroke();
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(3, -12);
-      ctx.lineTo(3, 12);
-      ctx.stroke();
-      ctx.restore();
-    } else if (this.characterClass === 'mage') {
-      // Magic Staff with glowing crystal
-      ctx.save();
-      ctx.translate(10, -2 + bob);
-      ctx.fillStyle = '#78350f';
-      ctx.fillRect(0, -16, 4, 30);
-      ctx.fillStyle = '#c084fc';
-      ctx.beginPath();
-      ctx.arc(2, -18, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    } else if (this.characterClass === 'rogue') {
-      // Twin Daggers
-      ctx.fillStyle = '#cbd5e1';
-      ctx.fillRect(8, 2 + bob, 12, 4);
-      ctx.fillRect(4, 8 + bob, 10, 4);
-    }
-  }
 
   renderProjectiles(ctx) {
     for (const p of this.projectiles) {

@@ -1,4 +1,5 @@
 // Base Enemy Class and standard monster variants
+import { IllustratedEnemyRenderer } from './IllustratedEnemies.js';
 
 export class Enemy {
   constructor(id, type, x, y, options = {}) {
@@ -165,46 +166,9 @@ export class Enemy {
   }
 
   render(ctx) {
-    if (this.isDead) return;
-
-    ctx.save();
-    ctx.translate(Math.round(this.x + this.width / 2), Math.round(this.y + this.height / 2));
-    ctx.scale(this.facing, 1);
-
-    if (this.hurtTimer > 0) {
-      ctx.fillStyle = '#ffffff'; // White flash when hit
-    }
-
-    if (this.type === 'slime') {
-      this.renderSlime(ctx);
-    } else if (this.type === 'bat') {
-      this.renderBat(ctx);
-    } else if (this.type === 'goblin') {
-      this.renderGoblin(ctx);
-    } else if (this.type === 'skeleton') {
-      this.renderSkeleton(ctx);
-    } else if (this.type === 'dark_knight') {
-      this.renderDarkKnight(ctx);
-    } else {
-      ctx.fillStyle = this.color;
-      ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-    }
-
-    ctx.restore();
-
-    // Overhead mini health bar
-    if (this.hp < this.maxHp) {
-      ctx.save();
-      const centerX = this.x + this.width / 2;
-      const topY = this.y - 8;
-      const barW = 28;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-      ctx.fillRect(centerX - barW / 2, topY, barW, 3);
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(centerX - barW / 2, topY, barW * (this.hp / this.maxHp), 3);
-      ctx.restore();
-    }
+    IllustratedEnemyRenderer.get().renderEnemy(ctx, this);
   }
+
 
   renderSlime(ctx) {
     const squish = Math.sin(this.animTime * 8) * 3;

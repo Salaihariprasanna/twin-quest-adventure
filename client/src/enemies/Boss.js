@@ -1,4 +1,5 @@
 // Multi-Phase Boss Battles with cooperative mechanics and phase transitions
+import { IllustratedBossRenderer } from './IllustratedBoss.js';
 
 export class Boss {
   constructor(level, x, y) {
@@ -241,53 +242,8 @@ export class Boss {
   render(ctx) {
     if (this.isDead) return;
 
-    ctx.save();
-    ctx.translate(Math.round(this.x + this.width / 2), Math.round(this.y + this.height / 2));
-    ctx.scale(this.facing, 1);
+    IllustratedBossRenderer.get().renderBoss(ctx, this);
 
-    const bob = Math.sin(this.animTime * 5) * 3;
-
-    // Telegraph / Enraged Warning Aura
-    if (this.attackState === 'telegraph' || this.phase === 3) {
-      ctx.save();
-      ctx.strokeStyle = this.phase === 3 ? '#ef4444' : this.glowColor;
-      ctx.lineWidth = 4 + Math.sin(this.animTime * 15) * 2;
-      ctx.strokeRect(-this.width / 2 - 4, -this.height / 2 - 4 + bob, this.width + 8, this.height + 8);
-      ctx.restore();
-    }
-
-    // Boss Body
-    ctx.fillStyle = this.hurtTimer > 0 ? '#ffffff' : this.primaryColor;
-    ctx.beginPath();
-    ctx.roundRect(-this.width / 2, -this.height / 2 + bob, this.width, this.height, 12);
-    ctx.fill();
-
-    // Crown / Horns
-    ctx.fillStyle = this.glowColor;
-    ctx.beginPath();
-    ctx.moveTo(-20, -this.height / 2 + bob);
-    ctx.lineTo(-28, -this.height / 2 - 16 + bob);
-    ctx.lineTo(-12, -this.height / 2 + bob);
-    ctx.lineTo(0, -this.height / 2 - 20 + bob);
-    ctx.lineTo(12, -this.height / 2 + bob);
-    ctx.lineTo(28, -this.height / 2 - 16 + bob);
-    ctx.lineTo(20, -this.height / 2 + bob);
-    ctx.fill();
-
-    // Boss Eyes (Glowing)
-    ctx.fillStyle = this.phase === 3 ? '#ef4444' : '#fef08a';
-    ctx.beginPath();
-    ctx.arc(10, -18 + bob, 6, 0, Math.PI * 2);
-    ctx.arc(24, -18 + bob, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Core / Weak Point on chest
-    ctx.fillStyle = this.glowColor;
-    ctx.beginPath();
-    ctx.arc(0, 10 + bob, 14, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
 
     // Render Boss Projectiles
     for (const p of this.projectiles) {
